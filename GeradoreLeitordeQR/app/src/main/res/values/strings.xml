@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">Gerador e Leitor de QR</string>
+    <string name="gerador">Gerar</string>
+    <string name="leitor">Ler</string>
+    <string name="text_leitor">Leitor de QR code</string>
+    <string name="text_gerador">Gerador de QR Code</string>
+    <string name="titulo">Gerador e Leitor de QR code</string>
+    <string name="campoDeCodigo">Digite o texto</string>
+    <string name="textoLeitor">Clique no Botão para Ler o Código</string>
+    <string name="botao_scan">Scan</string>
+    <string name="textoDoCodigo"></string>
+    <string name="trocar">Trocar</string>
+</resources>
