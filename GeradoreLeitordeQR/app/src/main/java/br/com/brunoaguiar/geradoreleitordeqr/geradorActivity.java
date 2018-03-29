@@ -3,9 +3,13 @@ package br.com.brunoaguiar.geradoreleitordeqr;
 import android.app.Activity;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.Toast;
+
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -22,7 +26,8 @@ import com.journeyapps.barcodescanner.BarcodeEncoder;
 public class geradorActivity extends Activity {
 
     ImageView ivQrCode;
-    Button trocar;
+    Handler handler;
+    long tempoRestante = 20000;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,34 +35,27 @@ public class geradorActivity extends Activity {
         setContentView(R.layout.gerador_activity);
 
         inicializarComponentes();
-        array();
 
-           /*int delay = 1000;
-            int interval = 5000;
-            Timer timer = new Timer();
-
-            timer.scheduleAtFixedRate(new TimerTask() {
-                public void run() {
-                    array();
-                }
-            }, delay, interval);
-            */
-
-        trocar.setOnClickListener(new View.OnClickListener() {
+        handler = new Handler();
+        Runnable runnable = new Runnable() {
             @Override
-            public void onClick(View view) {
+            public void run() {
                 array();
+                tempoRestante = tempoRestante - 5000;
+                if(tempoRestante > 0) {
+                    handler.postDelayed(this, 5000);
+                }
             }
-        });
-    }
+        };
+        handler.postDelayed(runnable, 0);
 
+
+    }
 
 
     private void inicializarComponentes() {
         ivQrCode = (ImageView) findViewById(R.id.ivQrCode);
-        trocar = findViewById(R.id.trocar);
     }
-
 
 
     public void array() {
@@ -91,34 +89,28 @@ public class geradorActivity extends Activity {
         objetos.add("310 Bruno 1234 2018");
 
 
+        Random random = new Random();
+        Object sorteada = objetos.get(random.nextInt(objetos.size()));
+        System.out.println("Tamanho inicial lista: " + objetos.size());
+
+        String texto = sorteada.toString();
+        MultiFormatWriter multiFormatWriter = new MultiFormatWriter();
+
+        try {
+            BitMatrix bitMatrix = multiFormatWriter.encode(texto, BarcodeFormat.QR_CODE, 2000, 2000);
+            BarcodeEncoder barcodeEncoder = new BarcodeEncoder();
+            Bitmap bitmap = barcodeEncoder.createBitmap(bitMatrix);
+            ivQrCode.setImageBitmap(bitmap);
+        } catch (WriterException e){
+            e.printStackTrace();}
+    }
 
 
 
-                Random random = new Random();
-                Object sorteada = objetos.get(random.nextInt(objetos.size()));
-                System.out.println("Tamanho inicial lista: " + objetos.size());
-
-                String texto = sorteada.toString();
-                MultiFormatWriter multiFormatWriter = new MultiFormatWriter();
-
-
-
-                try {
-                    BitMatrix bitMatrix = multiFormatWriter.encode(texto, BarcodeFormat.QR_CODE, 2000, 2000);
-                    BarcodeEncoder barcodeEncoder = new BarcodeEncoder();
-                    Bitmap bitmap = barcodeEncoder.createBitmap(bitMatrix);
-                    ivQrCode.setImageBitmap(bitmap);
-                } catch (WriterException e) {
-                    e.printStackTrace();
-                }
-
-            }
-
-
-
-
-        }
-
+    private void alert(String mensagem){
+        Toast.makeText(this, mensagem,Toast.LENGTH_SHORT).show();
+    }
+}
 
 
 
